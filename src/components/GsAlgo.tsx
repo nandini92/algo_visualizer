@@ -31,27 +31,30 @@ const GsAlgo: React.FC = () => {
           man.preference.some((woman) => {
             const prefWoman: Person = tempW[woman];
 
-            // Loop through the woman's preference to see if the man ranks higher in her preference list than the man she is engaged to
-            return prefWoman.preference.some((p) => {
-              // If man ranks higher than engaged, update engaged values to reflect correct indexes. Free man will be set to -1 and removed from S.
-              if (p === index && p > prefWoman.engaged) {
-                if (prefWoman.engaged !== -1) {
-                  relationship.splice(
-                    relationship.indexOf(prefWoman.engaged),
-                    1
-                  );
-                  tempM[prefWoman.engaged].engaged = -1;
-                }
+            // If  woman is not engaged, she will be engaged to man automatically and a pair is created.
+            if (prefWoman.engaged === -1) {
+              prefWoman.engaged = index;
+              man.engaged = woman;
 
-                prefWoman.engaged = index;
-                man.engaged = woman;
+              relationship.push(index);
+              return true;
 
-                relationship.push(index);
+              // Check the woman's preference to see if the man ranks higher in her preference list than the man she is engaged to
+            } else if (
+              index < prefWoman.preference.indexOf(prefWoman.engaged)
+            ) {
+              // If man ranks higher than engaged, man should be engaged to woman and vice-versa. Engaged for previous value will be set to -1(free man) and removed from S.
+              relationship.splice(relationship.indexOf(prefWoman.engaged), 1);
+              tempM[prefWoman.engaged].engaged = -1;
 
-                console.log(relationship);
-                return true;
-              }
-            });
+              prefWoman.engaged = index;
+              man.engaged = woman;
+
+              relationship.push(index);
+
+              console.log(relationship);
+              return true;
+            }
           });
       });
 
@@ -63,8 +66,25 @@ const GsAlgo: React.FC = () => {
 
   // Function to randomize preferences
   const handleRandomize = () => {
+    const prefArray: number[][] = [
+      [0, 1, 2],
+      [0, 2, 1],
+      [1, 0, 2],
+      [1, 2, 0],
+      [2, 1, 0],
+      [2, 0, 1],
+    ];
 
-  }
+    tempM.map(
+      (m) => (m.preference = prefArray[Math.floor(Math.random() * M.length)])
+    );
+    tempW.map(
+      (w) => (w.preference = prefArray[Math.floor(Math.random() * M.length)])
+    );
+
+    setM(tempM);
+    setW(tempW);
+  };
 
   // Function to kick off next sequence in the algo loop
   const handleClick = () => {
@@ -93,8 +113,12 @@ const GsAlgo: React.FC = () => {
     <Container>
       <Title>Gale-Shapley Algorithm</Title>
       <Options>
-        {relationship.length === 0 && <Button onClick={() => handleRandomize()}>Randomize</Button>}
-        {relationship.length < M.length && <Button onClick={() => handleClick()}>Next Round</Button>}
+        {relationship.length === 0 && (
+          <Button onClick={() => handleRandomize()}>Randomize</Button>
+        )}
+        {relationship.length < M.length && (
+          <Button onClick={() => handleClick()}>Next Iteration</Button>
+        )}
         <Button onClick={() => handleReset()}>Reset</Button>
       </Options>
       <Wrapper>
@@ -102,7 +126,7 @@ const GsAlgo: React.FC = () => {
           <Set>
             {M.map((i) => (
               <Block key={i.id}>
-                <p>{i.id}'s preference:</p>
+                <p>{i.id}'s preference (ordered):</p>
                 <Preference>
                   {i.preference.map((p) => (
                     <People>{W[p].id}</People>
@@ -125,7 +149,7 @@ const GsAlgo: React.FC = () => {
           <Set>
             {W.map((i) => (
               <Block key={i.id}>
-                <p>{i.id}'s preference:</p>
+                <p>{i.id}'s preference (ordered):</p>
                 <Preference>
                   {i.preference.map((p) => (
                     <People>{M[p].id}</People>
@@ -197,7 +221,7 @@ const Preference = styled.div`
 const Options = styled.div`
   display: flex;
   margin-left: 20px;
-`
+`;
 const Button = styled.div`
   padding: 10px;
   outline: none;
