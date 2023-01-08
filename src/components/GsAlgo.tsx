@@ -61,9 +61,41 @@ const GsAlgo: React.FC = () => {
     }
   }, [next]);
 
+  // Shuffle function based on Fisher-Yates shuffle algo
+  const shuffle = (array: number[]): number[] => {
+    let m: number = array.length;
+  
+    // While there remain elements to shuffle…
+    while (m) {
+  
+      // Pick a remaining element…
+      let i: number = Math.floor(Math.random() * m--);
+  
+      // And swap it with the current element.
+      let t: number = array[m];
+      array[m] = array[i];
+      array[i] = t;
+    }
+  
+    return array;
+  }
+
   // Function to randomize preferences
   const handleRandomize = () => {
+    tempM = [
+      { id: "Alex", preference: shuffle([0, 1, 2]), engaged: -1 },
+      { id: "Brian", preference: shuffle([0, 1, 2]), engaged: -1 },
+      { id: "Dan", preference: shuffle([0, 1, 2]), engaged: -1 },
+    ];
+    tempW = [
+      { id: "Linda", preference: shuffle([0, 1, 2]), engaged: -1 },
+      { id: "June", preference: shuffle([0, 1, 2]), engaged: -1 },
+      { id: "Kate", preference: shuffle([0, 1, 2]), engaged: -1 },
+    ];
 
+    setM(tempM);
+    setW(tempW);
+    setRelationship([]);
   }
 
   // Function to kick off next sequence in the algo loop
