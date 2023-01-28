@@ -5,6 +5,7 @@ const Header: React.FC = () => {
     return (
         <Container>
             <Nav to={"/gs-algo"}>Gale–Shapley</Nav>
+            <Nav to={"/sort-algo"}>Sorts</Nav>
         </Container>
     );
 }
