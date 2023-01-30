@@ -113,7 +113,7 @@ const Bar = styled.div`
   height: ${(props: any) => `${props.height}px`};
   width: 3px;
   background-color: ${(props: any) =>
-    props.highlighted ? "red" : "cornflowerblue"};
+    props.highlighted ?  "black" : "#db84db" };
 `;
 
 export default SortingVisualizer;
